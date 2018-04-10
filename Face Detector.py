@@ -28,6 +28,7 @@ print(webcam.isOpened())
 
 #initializing the detector
 detector = FaceDetector("haarcascade_frontalface_default.xml")
+detector2 = FaceDetector("frontalEyes35x16.xml")
 
 
 
