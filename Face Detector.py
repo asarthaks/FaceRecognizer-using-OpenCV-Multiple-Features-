@@ -28,20 +28,30 @@ print(webcam.isOpened())
 
 #initializing the detector
 detector = FaceDetector("haarcascade_frontalface_default.xml")
+detector2 = FaceDetector("frontalEyes35x16.xml")
 
 
 
 #drawing rectangle and displaying frame
 while webcam.isOpened():
-        _, frame = webcam.read()
-        frame = cv2.flip(frame,1)     #inverting the image
-        faces_coord = detector.detect(frame)
-        if len(faces_coord):
-            for (x,y,w,h) in faces_coord:
-                cv2.rectangle(frame, (x,y), (x+w, y+h), (150,150,0),8)
-            
-        cv2.imshow('Face Detector',frame)
-        #clear_output(wait = True)
+        ret,frame = video.read()    
+        frame = cv2.flip(frame,1)
+        gray=cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        biggest_only = True
+        flags = cv2.CASCADE_FIND_BIGGEST_OBJECT | \
+                cv2.CASCADE_DO_ROUGH_SEARCH if biggest_only else \
+                cv2.CASCADE_SCALE_IMAGE
+
+        faces_coord = detector.detectMultiScale(gray,1.2,5,minSize=minsize, flags=flags)
+
+        for (x, y, w, h) in faces_coord:
+            cv2.rectangle(frame,(x,y),(x+w,y+h),(120,120,0),1)
+            fram = gray[y:y+h,x:x+w]
+            fram_col = frame[y:y+h,x:x+w]
+            eyes = detector2.detectMultiScale(fram)
+            for (e, f, g, k) in eyes:
+                cv2.rectangle(fram_col,(e,f),(e+g,f+k),(140,100,0),1)
+        cv2.imshow("Arya",frame)
         
         #code 27 is ESC key
         if cv2.waitKey(20) & 0xFF ==27:
